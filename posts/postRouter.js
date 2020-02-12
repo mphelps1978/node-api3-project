@@ -47,11 +47,11 @@ router.delete('/:id', validatePostId, (req, res) => {
       });
 });
 
-router.put('/:id', validatePostId, (req, res) => {
-  Users.update(req.params.id, req.body)
+router.put('/:id', validatePostId, validatePost, (req, res) => {
+  Posts.update(req.params.id, req.body)
     .then(post => {
       if (post) {
-        res.status(200).json(post);
+        res.status(200).json(req.body);
       } else {
         res.status(404).json({ message: 'The post could not be found' });
       }
@@ -83,6 +83,16 @@ function validatePostId(req, res, next) {
       console.log(err);
       res.status(500).json({ message: 'Error validating Post ID' });
     });
+}
+
+function validatePost(req, res, next) {
+  if (!Object.keys(req.body).length) {
+    res.status(400).json({ message: 'Missing post data!' });
+  } else if (!req.body.text) {
+    res.status(400).json({ message: 'Missing required "text" field!' });
+  } else {
+    next();
+  }
 }
 
 
