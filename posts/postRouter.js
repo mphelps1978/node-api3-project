@@ -1,27 +1,89 @@
 const express = require('express');
 
 const router = express.Router();
+const Posts = require('./postDb')
+
+// *** BEGIN ENDPOINT ROUTING ***
 
 router.get('/', (req, res) => {
-  // do your magic!
+  Posts.get()
+    .then(posts => {
+      res.status(200).json(posts)
+    })
+    .catch(err => {
+      res.status(500).json({error: 'There was an error'})
+    })
 });
 
-router.get('/:id', (req, res) => {
-  // do your magic!
+
+
+router.get('/:id', validatePostId, (req, res) => {
+  Posts.getById(req.params.id)
+    .then(post => {
+      if(post) {
+        res.status(200).json(post)
+      } else {
+        res.status(404).json({error: 'Post not found'})
+      }
+    })
+    .catch(err => {
+      res.status(500).json({error: 'There was an error'})
+    })
+})
+
+
+router.delete('/:id', validatePostId, (req, res) => {
+  Posts.remove(req.params.id)
+      .then(count => {
+        if (count > 0) {
+          res.status(200).json({ message: 'The post has been deleted' });
+        } else {
+          res.status(404).json({ message: 'The post could not be found' });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ message: 'Error removing the post' });
+      });
 });
 
-router.delete('/:id', (req, res) => {
-  // do your magic!
+router.put('/:id', validatePostId, (req, res) => {
+  Users.update(req.params.id, req.body)
+    .then(post => {
+      if (post) {
+        res.status(200).json(post);
+      } else {
+        res.status(404).json({ message: 'The post could not be found' });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        message: 'Error updating the user',
+      });
+    });
 });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
-});
+// *** END ENDPOINT ROUTING ***
 
-// custom middleware
+
+// *** BEGIN CUSTOM MIDDLEWARE ***
 
 function validatePostId(req, res, next) {
-  // do your magic!
+  Posts.getById(req.params.id)
+    .then(post => {
+      if (!post) {
+        res.status(400).json({ message: 'Invalid Post ID' });
+      } else {
+        req.post = req.params.id;
+        next();
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: 'Error validating Post ID' });
+    });
 }
+
 
 module.exports = router;
