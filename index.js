@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const userRouter = require('./users/userRouter');
 const postRouter = require('./posts/postRouter');
 const port = process.env.PORT
+const tl = process.env.TLNAME
 
 const server = express();
 
@@ -22,7 +23,7 @@ server.use('/api/users', userRouter);
 server.use('/api/posts', postRouter);
 
 server.get('/', (req, res) => {
-  res.send(`<h1>WebAPI III Challenge</h1>`);
+  res.send(`<h1>WebAPI III Challenge</h1><h2>Welcome, ${tl} to my deployed site!</h2>`);
 });
 
 server.listen(port, () =>
