@@ -1,8 +1,10 @@
+require('dotenv').config()
 const express = require('express');
 const helmet = require('helmet');
 
 const userRouter = require('./users/userRouter');
 const postRouter = require('./posts/postRouter');
+const port = process.env.PORT
 
 const server = express();
 
@@ -23,7 +25,6 @@ server.get('/', (req, res) => {
   res.send(`<h1>WebAPI III Challenge</h1>`);
 });
 
-const port = 7000;
 server.listen(port, () =>
   console.log(`\n*** Server running on http://localhost:${port} ***\n`),
 );
