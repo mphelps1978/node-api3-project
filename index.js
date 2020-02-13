@@ -4,7 +4,7 @@ const helmet = require('helmet');
 
 const userRouter = require('./users/userRouter');
 const postRouter = require('./posts/postRouter');
-const port = process.env.PORT
+const port = process.env.PORT || 5000
 const tl = process.env.TLNAME
 
 const server = express();
